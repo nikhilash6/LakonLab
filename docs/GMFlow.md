@@ -17,9 +17,8 @@ In ICML 2025
 <sup>1</sup>Stanford University, <sup>2</sup>Adobe Research, <sup>3</sup>Hillbot
 <br>
 
-<img src="gmdit.png" width="600" alt=""/>
-
-<img src="gmdit_results.png" width="1000" alt=""/>
+<img src="assets/gmflow/gmdit.png" width="600" alt=""/>
+<img src="assets/gmflow/gmdit_results.png" width="1000" alt=""/>
 
 ## Highlights
 
@@ -35,13 +34,13 @@ GMFlow is an extension of diffusion/flow matching models.
 
 ## Installation
 
-Follow the instructions in the [root README](../../README.md#installation) to set up the environment and install LakonLab. In addition, if you would like to use the GM-SDE solver, please also install CUDA Toolkit 11.8+, which is required by the [gmflow_ops](../../lakonlab/ops/gmflow_ops) CUDA extension (compiled automatically when running for the first time).
+Follow the instructions in the [root README](../README.md#installation) to set up the environment and install LakonLab. In addition, if you would like to use the GM-SDE solver, please also install CUDA Toolkit 11.8+, which is required by the [gmflow_ops](../lakonlab/ops/gmflow_ops) CUDA extension (compiled automatically when running for the first time).
 
 ## GM-DiT ImageNet 256x256
 
 ### Inference
 
-We provide a [Diffusers pipeline](../../lakonlab/pipelines/pipeline_gmdit.py) for easy inference. The following code demonstrates how to sample images from the pretrained GM-DiT model using the GM-ODE 2 solver and the GM-SDE 2 solver.
+We provide a [Diffusers pipeline](../lakonlab/pipelines/pipeline_gmdit.py) for easy inference. The following code demonstrates how to sample images from the pretrained GM-DiT model using the GM-ODE 2 solver and the GM-SDE 2 solver.
 
 ```python
 import json
@@ -56,8 +55,8 @@ ckpt = snapshot_download(repo_id='Lakonik/gmflow_imagenet_k8_ema')
 # Fix the library path for the new LakonLab package structure
 index_path = Path(ckpt) / 'model_index.json'
 index_dict = json.loads(index_path.read_text(encoding="utf-8"))
-index_dict["spectrum_net"][0] = "lakonlab.models.architecture.gmflow.spectrum_mlp"
-index_dict["transformer"][0] = "lakonlab.models.architecture.gmflow.gmdit"
+index_dict["spectrum_net"][0] = "lakonlab.models.architectures.gmflow.spectrum_mlp"
+index_dict["transformer"][0] = "lakonlab.models.architectures.gmflow.gmdit"
 index_dict["scheduler"][0] = "lakonlab.models.diffusions.schedulers.flow_euler_ode"
 index_path.write_text(json.dumps(index_dict, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 # Load the local repo
@@ -99,7 +98,7 @@ for i, (word, image) in enumerate(zip(words, output.images)):
 
 The results will be saved under the current directory.
 
-<img src="example_results.png" width="800"  alt=""/>
+<img src="assets/gmflow/example_results.png" width="800"  alt=""/>
 
 ### Before Training: Data Preparation
 
@@ -144,9 +143,9 @@ Alternatively, you can start single-node DDP training from a Python script:
 python train.py configs/gmflow/gmdit_k8_imagenet_8gpus.py --gpu-ids 0 1 2 3 4 5 6 7
 ```
 
-The config in [gmdit_k8_imagenet_8gpus.py](gmdit_k8_imagenet_8gpus.py) specifies a training batch size of 512 images per GPU and an inference batch size of 125 images per GPU. Training requires 32GB of VRAM per GPU, and the validation step requires an additional 8GB of VRAM per GPU. If you are using 32GB GPUs, you can disable the validation step by adding the `--no-validate` flag to the training command. Alternatively, you can also edit the config file to adjust the batch sizes.
+The config in [gmdit_k8_imagenet_8gpus.py](../configs/gmflow/gmdit_k8_imagenet_8gpus.py) specifies a training batch size of 512 images per GPU and an inference batch size of 125 images per GPU. Training requires 32GB of VRAM per GPU, and the validation step requires an additional 8GB of VRAM per GPU. If you are using 32GB GPUs, you can disable the validation step by adding the `--no-validate` flag to the training command. Alternatively, you can also edit the config file to adjust the batch sizes.
 
-By default, checkpoints will be saved into [checkpoints/](checkpoints/), logs will be saved into [work_dirs/](work_dirs/), and sampled images will be saved into [viz/](viz/).
+By default, checkpoints will be saved into [checkpoints/](../checkpoints/), logs will be saved into [work_dirs/](../work_dirs/), and sampled images will be saved into [viz/](../viz/).
 
 #### Resuming Training
 
@@ -173,13 +172,13 @@ Alternatively, you can start single-node DDP evaluation from a Python script:
 python test.py configs/gmflow/gmdit_k8_imagenet_test.py --ckpt checkpoints/gmdit_k8_imagenet_8gpus/latest.pth --gpu-ids 0 1 2 3 4 5 6 7
 ```
 
-The config in [gmdit_k8_imagenet_test.py](gmdit_k8_imagenet_test.py) specifies an inference batch size of 125 images per GPU, which requires 35GB of VRAM per GPU. You can edit the config file to adjust the batch size.
+The config in [gmdit_k8_imagenet_test.py](../configs/gmflow/gmdit_k8_imagenet_test.py) specifies an inference batch size of 125 images per GPU, which requires 35GB of VRAM per GPU. You can edit the config file to adjust the batch size.
 
 The evaluation results will be saved to where the checkpoint is located, and the sampled images will be saved into [viz/](viz/).
 
 ## Toy Model on 2D Checkerboard
 
-We provide a minimal GMFlow trainer in [train_gmflow_toymodel.py](../../demo/train_gmflow_toymodel.py) for the toy model on the 2D checkerboard dataset. Run the following command to train the model:
+We provide a minimal GMFlow trainer in [train_gmflow_toymodel.py](../demo/train_gmflow_toymodel.py) for the toy model on the 2D checkerboard dataset. Run the following command to train the model:
 
 ```bash
 python demo/train_gmflow_toymodel.py -k 64
@@ -196,24 +195,25 @@ This full trainer is not optimized for the simple 2D checkerboard dataset, so GP
 ## Essential Code
 
 - Training
-    - [train_gmflow_toymodel.py](../../demo/train_gmflow_toymodel.py): A simplified training script for the 2D checkerboard experiment.
-    - [gmflow.py](../../lakonlab/models/diffusions/gmflow.py): The `forward_train` method contains the full training loop.
+    - [train_gmflow_toymodel.py](../demo/train_gmflow_toymodel.py): A simplified training script for the 2D checkerboard experiment.
+    - [gmflow.py](../lakonlab/models/diffusions/gmflow.py): The `forward_train` method contains the full training loop.
 - Inference
-    - [pipeline_gmdit.py](../../lakonlab/pipelines/pipeline_gmdit.py): Full sampling code in the style of Diffusers.
-    - [gmflow.py](../../lakonlab/models/diffusions/gmflow.py): The `forward_test` method contains the same full sampling loop.
+    - [pipeline_gmdit.py](../lakonlab/pipelines/pipeline_gmdit.py): Full sampling code in the style of Diffusers.
+    - [gmflow.py](../lakonlab/models/diffusions/gmflow.py): The `forward_test` method contains the same full sampling loop.
 - Networks
-    - [gmdit.py](../../lakonlab/models/architecture/gmflow/gmdit.py): GMDiT
-    - [spectrum_mlp.py](../../lakonlab/models/architecture/gmflow/spectrum_mlp.py): SpectrumMLP
-    - [toymodels.py](../../lakonlab/models/architecture/gmflow/toymodels.py): MLP toy model for the 2D checkerboard experiment.
+    - [gmdit.py](../lakonlab/models/architectures/gmflow/gmdit.py): GMDiT
+    - [spectrum_mlp.py](../lakonlab/models/architectures/gmflow/spectrum_mlp.py): SpectrumMLP
+    - [toymodels.py](../lakonlab/models/architectures/gmflow/toymodels.py): MLP toy model for the 2D checkerboard experiment.
 - GM math operations
-    - [gmflow_ops](../../lakonlab/ops/gmflow_ops/): A complete library of analytic operations for GM and Gaussian distributions.
+    - [gmflow_ops](../lakonlab/ops/gmflow_ops/): A complete library of analytic operations for GM and Gaussian distributions.
 
 ## Citation
 ```
-@inproceedings{gmflow,
+@article{gmflow,
   title={Gaussian Mixture Flow Matching Models},
   author={Hansheng Chen and Kai Zhang and Hao Tan and Zexiang Xu and Fujun Luan and Leonidas Guibas and Gordon Wetzstein and Sai Bi},
-  booktitle={ICML},
+  url={https://arxiv.org/abs/2504.05304}, 
+  journal={arXiv preprint arXiv:2504.05304},
   year={2025},
 }
 ```

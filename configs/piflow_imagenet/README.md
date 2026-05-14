@@ -1,7 +1,7 @@
 ## Distilling ImageNet DiT
 
 ### Training
-Before training, please follow the instructions [here](../gmflow/README.md#before-training-data-preparation) to prepare the ImageNet dataset.
+Before training, please follow the instructions [here](../../docs/GMFlow.md#before-training-data-preparation) to prepare the ImageNet dataset.
 
 Run the following command to train the model using DDP on 1 node with 8 GPUs:
 ```bash
