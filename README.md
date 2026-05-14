@@ -55,6 +55,8 @@ Official PyTorch implementation of the papers:
 
 ## 🔥News
 
+- [May 14, 2026] [AsymFlow](docs/AsymFlow.md) is released!
+
 - [Dec 12, 2025] pi-FLUX.2 is now available for 4-step image generation and editing! Check out the [pi-FLUX.2 Demo🤗](https://huggingface.co/spaces/Lakonik/pi-FLUX.2). Please re-install the latest version of LakonLab (this repository) to use pi-FLUX.2.
 
 - [Nov 7, 2025] [ComfyUI-piFlow](https://github.com/Lakonik/ComfyUI-piFlow) is now available! Supports 4-step sampling of Qwen-Image and Flux.1 dev using 8-bit models on a single consumer-grade GPU, powered by [ComfyUI](https://github.com/comfyanonymous/ComfyUI).
@@ -127,7 +129,8 @@ LakonLab uses the configuration system and code structure from [MMCV](https://gi
 @article{asymflow,
   title={Asymmetric Flow Models},
   author={Hansheng Chen and Jan Ackermann and Minseo Kim and Gordon Wetzstein and Leonidas Guibas},
-  journal={arXiv preprint},
+  url={https://arxiv.org/abs/2605.12964},
+  journal={arXiv preprint arXiv:2605.12964},
   year={2026},
 }
 
