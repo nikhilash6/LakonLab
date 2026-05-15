@@ -90,7 +90,7 @@ class AsymFlowVR(GaussianFlow):
         pred_u = self.pred(x_t, t, **kwargs)
         pred_x_0 = self.u_to_x_0(pred_u, x_t, sigma=sigma)
 
-        # adaptive residual weighting
+        # adaptive variance reduction coefficient
         low_rank_diff = self.denoising.patchify(
             x_0_low_rank - ref_x_0_low_rank, self.denoising.patch_size, pack_channels=False
         )  # (bs, c, patch_numel, *)
@@ -100,7 +100,7 @@ class AsymFlowVR(GaussianFlow):
 
         num = (full_rank_diff * low_rank_diff).mean(dim=2, keepdim=True)
         den = low_rank_diff.square().mean(dim=2, keepdim=True).clamp(min=eps)
-        res_coef = (num / den).clamp_(0.0, 1.0)
+        vr_coef = (num / den).clamp_(0.0, 1.0)
 
         if self.loss_shift is None:
             shifted_signal_ratio = 0.0
@@ -108,14 +108,14 @@ class AsymFlowVR(GaussianFlow):
             shifted_signal_ratio = calc_shifted_signal_ratio(sigma, self.loss_shift)
 
         tgt_x_0 = x_0 - (1 - shifted_signal_ratio) * self.denoising.unpatchify(
-            res_coef * low_rank_diff, self.denoising.patch_size, packed_channels=False)
+            vr_coef * low_rank_diff, self.denoising.patch_size, packed_channels=False)
         mse_loss = F.mse_loss(pred_x_0, tgt_x_0, reduction='none')
         mse_loss = 0.5 * self.mse_loss_weight * (mse_loss / sigma_clamped.square()).mean()  # velocity-weighted MSE loss
 
         loss = mse_loss
         log_vars = dict(
             loss_diffusion=float(mse_loss),
-            res_coef=float(res_coef.mean())
+            vr_coef=float(vr_coef.mean())
         )
 
         if self.perceptual_loss is not None:
@@ -126,14 +126,14 @@ class AsymFlowVR(GaussianFlow):
             pred_image = vae.decode(pred_x_0.to(vae_dtype))
             tgt_image = vae.decode(x_0.to(vae_dtype))
 
-            res_weight = self.denoising.unpatchify(
-                res_coef.expand_as(low_rank_diff).square().mean(dim=1, keepdim=True).sqrt(),  # (bs, 1, patch_numel, *)
+            vr_coef_gate = self.denoising.unpatchify(
+                vr_coef.expand_as(low_rank_diff).square().mean(dim=1, keepdim=True).sqrt(),  # (bs, 1, patch_numel, *)
                 self.denoising.patch_size,
                 packed_channels=False)
             time_weight = shifted_signal_ratio / sigma_clamped.square()
 
             perceptual_loss = self.perceptual_loss(
-                pred_image, tgt_image, weight=res_weight * time_weight)
+                pred_image, tgt_image, weight=vr_coef_gate * time_weight)
             loss = loss + perceptual_loss
             log_vars.update(loss_perceptual=float(perceptual_loss))
 
