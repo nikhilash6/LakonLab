@@ -120,7 +120,7 @@ Before training, Download [ILSVRC2012_img_train.tar](https://www.image-net.org/c
 │       ├── imagenet1000_clsidx_to_labels.txt
 │       ├── train.txt
 |       …
-├── lib/
+├── lakonlab/
 ├── tools/
 …
 ```

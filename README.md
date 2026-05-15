@@ -2,7 +2,7 @@
 
 Official PyTorch implementation of the papers:
 
-- **Asymmetric Flow Models [[Code](docs/AsymFlow.md)]**
+- **Asymmetric Flow Models [[README](docs/AsymFlow.md)]**
     <br>
     arXiv 2026
     <br>
@@ -17,7 +17,7 @@ Official PyTorch implementation of the papers:
   
     <img src="docs/assets/asymflow/asymflow_teaser.jpg" width="250" alt=""/>    
 
-- **pi-Flow: Policy-Based Few-Step Generation via Imitation Distillation [[Code](docs/piFlow.md)]**
+- **pi-Flow: Policy-Based Few-Step Generation via Imitation Distillation [[README](docs/piFlow.md)]**
     <br>
     In ICLR 2026
     <br>
@@ -33,7 +33,7 @@ Official PyTorch implementation of the papers:
 
     <img src="docs/assets/piflow/piflow_teaser.jpg" width="250" alt=""/>
 
-- **Gaussian Mixture Flow Matching Models [[Code](docs/GMFlow.md)]**
+- **Gaussian Mixture Flow Matching Models [[README](docs/GMFlow.md)]**
     <br>
     In ICML 2025
     <br>
