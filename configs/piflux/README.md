@@ -54,7 +54,7 @@ Then, modify the test config file to set `pretrained_adapter` to `<OUTPUT_DIR>/d
 
 *Option B.*
 
-Copy the `use_lora`, `lora_target_modules`, and `lora_rank` settings from the train config file to the test config file, and then run the evaluation command with an additional `--ckpt <PATH_TO_CKPT>` argument:
+Copy the `use_lora`, `lora_target_modules`, and `lora_rank` settings from the train config file to the test config file, remove the `pretrained_adapter` line, and then run the evaluation command with an additional `--ckpt <PATH_TO_CKPT>` argument:
 ```bash
 torchrun --nnodes=1 --nproc_per_node=8 tools/test.py <PATH_TO_CONFIG> --ckpt <PATH_TO_CKPT> --launcher pytorch --diff_seed
 ```
