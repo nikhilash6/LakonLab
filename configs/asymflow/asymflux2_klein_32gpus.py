@@ -192,7 +192,7 @@ for data_split in ['val']:
             metric_cpu_offload=True,
             save_best_ckpt=False))
 
-total_iters = 20000
+total_iters = 15000
 log_config = dict(
     interval=10,
     hooks=[
